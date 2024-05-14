@@ -1,0 +1,138 @@
+version: "3"
+networks:
+  frontend:
+    driver: ${NETWORKS_DRIVER}
+  backend:
+    driver: ${NETWORKS_DRIVER}
+volumes:
+  mysql:
+    driver: ${VOLUMES_DRIVER}
+  redis:
+    driver: ${VOLUMES_DRIVER}
+
+services:
+  ### Application(PHP/Laravel  API) #########################################
+  api:
+    container_name: ${PROJECT_NAME}-api
+    build:
+      context: ./.docker/api
+      dockerfile: Dockerfile
+    volumes:
+      - ${WORK_DIR_BACKEND}:/var/www/application
+      - ./.docker/api/settings/php.dev.ini:/usr/local/etc/php/conf.d/php.ini
+      - ./.docker/api/settings/www.dev.conf:/usr/local/etc/php-fpm.d/www.confFROM
+#    environment:
+#      - DB_CONNECTION=mysql
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - backend
+
+  ### NGINX Server #########################################
+  nginx:
+    build:
+      context: ./.docker/nginx
+      dockerfile: Dockerfile
+    container_name: ${PROJECT_NAME}-nginx
+    ports:
+      - "${NGINX_HTTP_PORT}:80"
+      - "${NGINX_HTTPS_PORT}:443"
+    volumes:
+      - ${WORK_DIR_BACKEND}:/var/www/application
+      - ${WORK_DIR_FRONTEND}:/var/www/next
+      - ./.docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+      - ./.docker/nginx/conf.d/nginx.conf:/etc/nginx/nginx.conf
+      - ${DATA_PATH}/logs/nginx:/var/log/nginx
+      - ./.docker/nginx/certs:/etc/ssl/certs
+    depends_on:
+      - api
+      - next
+    networks:
+      - backend
+
+  ### Nodejs(Laravel) ################################################
+  nodejs:
+    container_name: ${PROJECT_NAME}-nodejs
+    image:  node:20-alpine3.16
+    tty: true
+    volumes:
+      - ${WORK_DIR_BACKEND}:/var/www/application
+    networks:
+      - backend
+
+  ### MySQL #################################################
+  mysql:
+    image: mysql:8.0.34
+    container_name: ${PROJECT_NAME}-mysql
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=Asia/Tokyo
+    volumes:
+      - ./.docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ${DATA_PATH}/mysql/logs:/var/log/mysql:rw
+      # - ./mysql/dump/setup.sql:/docker-entrypoint-initdb.d
+    ports:
+      - ${MYSQL_PORT}:3306
+    #    depends_on:
+    #      - redis
+    networks:
+      - backend
+
+  ### MySQL test #################################################
+  db-testing:
+    image: mysql:8.0.34
+    container_name: ${PROJECT_NAME}-testing-mysql
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=Asia/Tokyo
+    volumes:
+      - ./.docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      # - ./mysql/dump/setup.sql:/docker-entrypoint-initdb.d
+    tmpfs:
+       - /var/lib/mysql
+       - /var/log/mysql
+    ports:
+      - ${MYSQL_TEST_PORT}:3306
+    #    depends_on:
+    #      - redis
+    networks:
+      - backend
+
+  ### Redis ################################################
+  redis:
+    container_name: ${PROJECT_NAME}-redis
+    build:
+      context: .
+      dockerfile: ./.docker/redis/Dockerfile
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - ${DATA_PATH}/db/redis:/data
+    networks:
+      - backend
+
+  ### Next.js ################################################
+  next:
+    container_name: ${PROJECT_NAME}-next
+    ports:
+      - 3000:3000
+    build:
+      context:  ./.docker/next
+      dockerfile: Dockerfile
+    tty: true
+    command: 'yarn dev'
+    volumes:
+      - ${WORK_DIR_FRONTEND}:/var/www/next:delegated
+    #    depends_on:
+    #      - redis
+    networks:
+      - backend
+    depends_on:
+      - api
