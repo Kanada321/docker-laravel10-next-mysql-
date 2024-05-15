@@ -2,6 +2,10 @@ FROM php:8.3.6-fpm-alpine3.19
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
+RUN apk add --no-cache shadow && \
+    usermod -u 1000 www-data && \
+    groupmod -g 1000 www-data
+
 # fix timezone
 ARG TIME_ZONE=Asia/Tokyo
 ENV TZ ${TIME_ZONE}
