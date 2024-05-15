@@ -38,6 +38,8 @@ http://localhost:802/api/
 Hello Worldが表示される
 
 Laravel側認証
+docker-compose exec next npm install axios
+docker-compose exec next npm install @types/axios
 https://qiita.com/masakiwakabayashi/items/58734b3988d5fac814fb
 
 https://qiita.com/yugami/items/f46aaaff7be32922d0f3
