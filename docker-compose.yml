@@ -128,6 +128,8 @@ services:
       dockerfile: Dockerfile
     tty: true
     command: 'yarn dev'
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ${WORK_DIR_FRONTEND}:/var/www/next:delegated
     #    depends_on:

@@ -27,6 +27,20 @@ docker-compose exec api composer create-project --prefer-dist laravel/laravel="1
 
 laravelの.envを設定する
 
+backend/routes/api.php
+Route::get('/', function () {
+    return response('Hello World', 200)
+        ->header('Content-Type', 'text/plain');
+});
+
+ブラウザで接続
+http://localhost:802/api/
+Hello Worldが表示される
+
+Laravel側認証
+docker-compose exec next npm install axios
+docker-compose exec next npm install @types/axios
+https://qiita.com/masakiwakabayashi/items/58734b3988d5fac814fb
 
 https://qiita.com/yugami/items/f46aaaff7be32922d0f3
 https://zenn.dev/yamadadayo123/articles/6cb4f586de0183
