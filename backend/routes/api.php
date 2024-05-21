@@ -1,6 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\GuildController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +18,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // ログインと新規登録のルーティング
-Route::post('/register', 'App\Http\Controllers\AuthController@register');
-Route::post('/login', 'App\Http\Controllers\AuthController@login');
+Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/login', [AuthController::class,'login']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// 認証が必要なルート
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [AuthController::class, 'getUser']);
+    Route::post('/logout', [AuthController::class,'logout']);
+    // ユーザープロファイル関連
+    Route::put('/user/profile', [UserController::class, 'updateProfile']);
+
+    // ギルド関連
+    Route::prefix('guilds')->group(function () {
+        Route::post('/', [GuildController::class, 'create']);
+        Route::get('/', [GuildController::class, 'index']);
+        Route::get('/{id}', [GuildController::class, 'show']);
+    });
+
+    // イベント関連
+    Route::prefix('events')->group(function () {
+        Route::post('/', [EventController::class, 'create']);
+        Route::get('/', [EventController::class, 'index']);
+        Route::get('/{id}', [EventController::class, 'show']);
+        Route::put('/{id}/status', [EventController::class, 'updateStatus']);
+    });
 });
