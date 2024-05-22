@@ -88,7 +88,7 @@ const LoginForm = () => {
             </div>
             <div className="flex items-center justify-center mt-8">
               <button
-                className="text-white py-2 px-4 uppercase rounded bg-sky-600/75 hover:bg-sky-600 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
+                className="text-white py-2 px-4 uppercase rounded bg-orange-500/75 hover:bg-orange-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
                 type="submit"
               >
                 ログイン

@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, ChangeEvent } from 'react'
 import http from '@/lib/axios'
 import { useRouter } from 'next/navigation'
 
 const RegisterForm = () => {
   const [userId, setUserId] = useState('')
   const [password, setPassword] = useState('')
+  const [isAgreed, setIsAgreed] = useState(false);
   const router = useRouter()
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,6 +26,11 @@ const RegisterForm = () => {
     }
   }
 
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setIsAgreed(event.target.checked);
+  };
+
+
   return (
     <div className="">
       <div className="p-8 lg:w-1/2 mx-auto">
@@ -41,6 +47,7 @@ const RegisterForm = () => {
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
                 required
+                placeholder="UserID"
               />
               <div className="absolute left-0 inset-y-0 flex items-center">
                 <svg
@@ -63,6 +70,7 @@ const RegisterForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                placeholder="Password"
               />
               <div className="absolute left-0 inset-y-0 flex items-center">
                 <svg
@@ -79,16 +87,21 @@ const RegisterForm = () => {
             </div>
 
             <div className="mt-4 flex items-center text-gray-500">
-              <input type="checkbox" id="remember" name="remember" className="mr-2"/>
+              <input type="checkbox" id="remember" name="remember" className="mr-2"
+                     onChange={handleCheckboxChange}
+              />
               <label className="text-sm" htmlFor="remember">
-                I agree with the <a className="text-indigo-400 hover:text-indigo-500">Privacy Policy</a>
+                <a className="text-indigo-400 hover:text-indigo-500">プライバシーポリシー</a>に同意する
               </label>
             </div>
 
             <div className="flex items-center justify-center mt-8">
               <button
-                className="text-white py-2 px-4 uppercase rounded bg-orange-500/75 hover:bg-orange-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
+                className={`text-white py-2 px-4 uppercase rounded ${
+                  isAgreed ? 'bg-orange-500/75 hover:bg-orange-500' : 'bg-orange-500/35'
+                } shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5`}
                 type="submit"
+                disabled={!isAgreed}
               >
                 新規登録
               </button>
