@@ -1,0 +1,9 @@
+{
+  "userId": "ユーザーID",
+  "password": "パスワード",
+  "required": ":attributeは必須です。",
+  "string": ":attributeは文字列でなければなりません。",
+  "max": ":attributeは:max文字以内でなければなりません。",
+  "min": ":attributeは少なくとも:min文字でなければなりません。",
+  "unique": "この:attributeは既に使用されています。"
+}

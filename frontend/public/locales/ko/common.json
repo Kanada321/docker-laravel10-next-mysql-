@@ -1,0 +1,9 @@
+{
+  "userId": "사용자 이름",
+  "password": "비밀번호",
+  "required": ":attribute은(는) 필수 항목입니다.",
+  "string": ":attribute은(는) 문자열이어야 합니다.",
+  "max": ":attribute은(는) 최대 :max자이어야 합니다.",
+  "min": ":attribute은(는) 최소 :min자이어야 합니다.",
+  "unique": "이미 사용 중인 :attribute입니다."
+}

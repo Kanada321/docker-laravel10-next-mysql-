@@ -1,4 +1,3 @@
-// next.config.mjs
 const nextConfig = {
     webpackDevMiddleware: config => {
         config.watchOptions = {

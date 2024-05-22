@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -18,9 +19,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_identification',
         'name',
-        'email',
         'password',
+        'guild_id',
+        'role_id',
+        'lv',
+        'class',
     ];
 
     /**
@@ -38,8 +43,25 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+//    protected $casts = [
+//        'email_verified_at' => 'datetime',
+//        'password' => 'hashed',
+//    ];
+
+    // パスワードを自動的にハッシュ化
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = Hash::make($password);
+    }
+
+    public function guilds()
+    {
+        return $this->belongsTo(Guild::class);
+    }
+
+    public function roles()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
 }

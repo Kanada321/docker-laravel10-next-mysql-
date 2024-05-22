@@ -1,41 +1,44 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, ChangeEvent } from 'react'
 import http from '@/lib/axios'
 import { useRouter } from 'next/navigation'
 
-
-const LoginForm = () => {
+const RegisterForm = () => {
   const [userId, setUserId] = useState('')
   const [password, setPassword] = useState('')
+  const [isAgreed, setIsAgreed] = useState(false);
   const router = useRouter()
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     try {
       // CSRFトークンの取得
       await http.get('/sanctum/csrf-cookie')
 
-      // ログインリクエストの送信
-      const response = await http.post('/api/login', {userId, password})
-
-      if (response.status === 200) {
-        router.push('/dashboard') // ログイン後のリダイレクト先
-      }
+      // ユーザー登録リクエストの送信
+      await http.post('/api/register', {userId, password})
+      alert('User registered successfully')
+      router.push('/login')
     } catch (error) {
-      console.error('Login error:', error)
+      console.error('Register error:', error)
     }
   }
+
+  const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setIsAgreed(event.target.checked);
+  };
+
 
   return (
     <div className="">
       <div className="p-8 lg:w-1/2 mx-auto">
         <div className="bg-gray-100 rounded-b-lg py-12 px-4 lg:px-24">
           <p className="text-center text-xl text-gray-500 font-light">
-           ログイン
+            新規登録
           </p>
-          <form onSubmit={handleLogin} className="mt-6">
+          <form onSubmit={handleRegister} className="mt-6">
             <div className="relative">
               <input
                 className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600  transition  rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
@@ -43,8 +46,8 @@ const LoginForm = () => {
                 type="text"
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
-                placeholder="UserID"
                 required
+                placeholder="UserID"
               />
               <div className="absolute left-0 inset-y-0 flex items-center">
                 <svg
@@ -64,10 +67,10 @@ const LoginForm = () => {
                 className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600  transition  rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
                 id="password"
                 type="password"
-                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                placeholder="Password"
               />
               <div className="absolute left-0 inset-y-0 flex items-center">
                 <svg
@@ -82,24 +85,33 @@ const LoginForm = () => {
                 </svg>
               </div>
             </div>
+
             <div className="mt-4 flex items-center text-gray-500">
-              <input type="checkbox" id="remember" name="remember" className="mr-3"/>
-              <label htmlFor="remember">Remember me</label>
+              <input type="checkbox" id="remember" name="remember" className="mr-2"
+                     onChange={handleCheckboxChange}
+              />
+              <label className="text-sm" htmlFor="remember">
+                <a className="text-indigo-400 hover:text-indigo-500">プライバシーポリシー</a>に同意する
+              </label>
             </div>
+
             <div className="flex items-center justify-center mt-8">
               <button
-                className="text-white py-2 px-4 uppercase rounded bg-orange-500/75 hover:bg-orange-500 shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5"
+                className={`text-white py-2 px-4 uppercase rounded ${
+                  isAgreed ? 'bg-orange-500/75 hover:bg-orange-500' : 'bg-orange-500/35'
+                } shadow hover:shadow-lg font-medium transition transform hover:-translate-y-0.5`}
                 type="submit"
+                disabled={!isAgreed}
               >
-                ログイン
+                新規登録
               </button>
             </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  )
 
+      </form>
+    </div>
+</div>
+</div>
+)
 }
 
-export default LoginForm
+export default RegisterForm
