@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->string('guild_event_no')->nullable();
             $table->foreignId('guild_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->date('date');
-            $table->integer('participant_limit')->nullable();
-            $table->text('details')->nullable();
+            $table->string('name')->nullable();
+            $table->date('event_date')->nullable();
+            $table->time('event_time')->nullable();
+            $table->integer('maximum_people')->nullable()->default(300)->comment('参加上限人数');
+            $table->text('explanation')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

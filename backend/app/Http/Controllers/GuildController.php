@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -15,17 +16,17 @@ class GuildController extends Controller
      * @return JsonResponse
      * @throws \Exception
      */
-    public function create(Request $request):JsonResponse
+    public function create(Request $request): JsonResponse
     {
         $request->validate([
-            'name' => 'required|string|unique:guilds,name|max:255',
-            'description' => 'nullable|string',
-        ]);
+                               'name'        => 'required|string|unique:guilds,name|max:255',
+                               'description' => 'nullable|string',
+                           ]);
 
         $guild = Guild::create([
-            'name' => $request->name,
-            'description' => $request->description,
-        ]);
+                                   'name'        => $request->name,
+                                   'description' => $request->description,
+                               ]);
 
         // ギルドマスターとして登録する
         $user = Auth::user();
@@ -37,7 +38,7 @@ class GuildController extends Controller
     /**
      * @return JsonResponse
      */
-    public function index():JsonResponse
+    public function index(): JsonResponse
     {
         $guilds = Guild::with('users')->get();
         return response()->json($guilds);
@@ -47,7 +48,7 @@ class GuildController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function show($id):JsonResponse
+    public function show($id): JsonResponse
     {
         $guild = Guild::with('users')->findOrFail($id);
         return response()->json($guild);
@@ -58,12 +59,12 @@ class GuildController extends Controller
      * @return void
      * @throws \Exception
      */
-    private function assignGuildMaster(Guild $guild) :void
+    private function assignGuildMaster(Guild $guild): void
     {
         $user = Auth::user();
         if ($user) {
             $user->guild_id = $guild->id;
-            $user->role_id = Role::where('name', 'guild_master')->first()->id;
+            $user->role_id  = Role::where('name', 'guild_master')->first()->id;
             $user->save();
         } else {
             throw new \Exception('User not authenticated');

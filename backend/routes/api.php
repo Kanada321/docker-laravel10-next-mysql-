@@ -19,12 +19,12 @@ use Illuminate\Support\Facades\Route;
 */
 // ログインと新規登録のルーティング
 Route::post('/register', [RegisterController::class, 'register']);
-Route::post('/login', [AuthController::class,'login']);
+Route::post('/login', [AuthController::class, 'login']);
 
 // 認証が必要なルート
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'getUser']);
-    Route::post('/logout', [AuthController::class,'logout']);
+    Route::post('/logout', [AuthController::class, 'logout']);
     // ユーザープロファイル関連
     Route::put('/user/profile', [UserController::class, 'updateProfile']);
 

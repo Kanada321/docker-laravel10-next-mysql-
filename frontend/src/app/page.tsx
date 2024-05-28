@@ -1,3 +1,4 @@
+"use client"
 // src/app/page.tsx
 const HomePage = () => {
   return (

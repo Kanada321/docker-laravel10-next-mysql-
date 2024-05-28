@@ -13,9 +13,16 @@ return new class extends Migration
     {
         Schema::create('guilds', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->text('description')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->boolean('use_pass')->default(false);
+            $table->string('password')->nullable();
+            $table->string('token')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
         });
     }
 

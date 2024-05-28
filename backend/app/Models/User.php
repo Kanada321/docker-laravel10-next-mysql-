@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -8,6 +9,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Relations\{
+    HasOne,
+    BelongsTo,
+};
+
 
 class User extends Authenticatable
 {
@@ -38,28 +44,29 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+
     /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
-//    protected $casts = [
-//        'email_verified_at' => 'datetime',
-//        'password' => 'hashed',
-//    ];
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password'          => 'hashed',
+    ];
 
-    // パスワードを自動的にハッシュ化
-    public function setPasswordAttribute($password)
+    /**
+     * @return HasOne
+     */
+    public function guild():HasOne
     {
-        $this->attributes['password'] = Hash::make($password);
+        return $this->hasOne(Guild::class);
     }
 
-    public function guilds()
-    {
-        return $this->belongsTo(Guild::class);
-    }
-
-    public function roles()
+    /**
+     * @return BelongsTo
+     */
+    public function roles():BelongsTo
     {
         return $this->belongsTo(Role::class);
     }

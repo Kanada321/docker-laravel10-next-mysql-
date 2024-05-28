@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
@@ -7,12 +8,12 @@ use App\Http\Requests\AuthRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     // ログイン
-    public function login(AuthRequest $request) {
+    public function login(AuthRequest $request)
+    {
         $credentials = $request->only('userId', 'password');
         \Log::debug('ログイン試行:', $credentials);
         if (Auth::attempt(['user_identification' => $credentials['userId'], 'password' => $credentials['password']])) {
@@ -23,9 +24,6 @@ class AuthController extends Controller
 
             return response()->json(['token' => $token], Response::HTTP_OK);
         }
-        $passhash = Hash::make($credentials['password']);
-        \Log::debug('ログイン失敗');
-        \Log::debug('ログイン失敗:'.$credentials['userId'].':'.$credentials['password'].':'.$passhash );
         return response()->json('Can Not Login.', Response::HTTP_UNAUTHORIZED);
     }
 
