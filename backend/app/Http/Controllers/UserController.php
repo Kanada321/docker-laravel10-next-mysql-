@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -13,12 +14,12 @@ class UserController extends Controller
     public function updateProfile(Request $request)
     {
         $request->validate([
-            'lv' => 'required|integer|min=1',
-            'class' => 'required|string|max:255',
-        ]);
+                               'lv'    => 'required|integer|min=1',
+                               'class' => 'required|string|max:255',
+                           ]);
 
-        $user = Auth::user();
-        $user->lv = $request->input('lv');
+        $user        = Auth::user();
+        $user->lv    = $request->input('lv');
         $user->class = $request->input('class');
         $user->save();
 

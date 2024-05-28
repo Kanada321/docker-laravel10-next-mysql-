@@ -6,6 +6,10 @@ const nextConfig = {
         };
         return config;
     },
+    experimental: {
+        reactRoot: true,
+        serverComponents: true,
+    },
 };
 
 export default nextConfig;

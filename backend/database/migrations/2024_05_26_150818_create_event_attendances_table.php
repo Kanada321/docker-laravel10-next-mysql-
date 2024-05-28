@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('event_attendances', function (Blueprint $table) {
             $table->id();
-            $table->string('guild_event_no')->nullable();
             $table->foreignId('guild_id')->constrained()->onDelete('cascade');
-            $table->string('name')->nullable();
-            $table->date('event_date')->nullable();
-            $table->time('event_time')->nullable();
-            $table->integer('maximum_people')->nullable()->default(300)->comment('参加上限人数');
-            $table->text('explanation')->nullable();
+            $table->integer('guild_event_no');
+            $table->foreignId('event_id')->constrained()->onDelete('cascade');
+            $table->foreignId('guild_member_id')->constrained()->onDelete('cascade');
+            $table->enum('status', [1, 2, 3, 4])->default(1)->comment('1:未定, 2:参加, 3:不参加, 4:検討中');
+            $table->text('comment')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('event_attendances');
     }
 };
