@@ -70,4 +70,18 @@ class GuildController extends Controller
             throw new \Exception('User not authenticated');
         }
     }
+
+    /**
+     * @param Guild $guild
+     * @return JsonResponse
+     */
+    public function getParameter(Guild $guild): JsonResponse
+    {
+        if ($guild) {
+            return response()->json(['parameter' => $guild->parameter], 200);
+        } else {
+            return response()->json(['error' => 'Guild not found'], 404);
+        }
+    }
+
 }

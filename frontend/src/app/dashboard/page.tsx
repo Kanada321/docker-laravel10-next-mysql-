@@ -1,20 +1,24 @@
-"use client";
+"use client"
 
-import useAuth from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth'
 
 const DashboardPage = () => {
-    const user = useAuth();
+  const {user, loading} = useAuth()
 
-    if (!user) {
-        return <div>Loading...</div>;
-    }
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
-    return (
-        <div>
-            <h1>Dashboard</h1>
-            <p>Welcome, {user.userId}</p>
-        </div>
-    );
-};
+  if (!user) {
+    return <div>No user found</div>
+  }
 
-export default DashboardPage;
+  return (
+    <div>
+      <h1>Dashboard</h1>
+      <p>Welcome, {user.userId}</p>
+    </div>
+  )
+}
+
+export default DashboardPage

@@ -1,47 +1,46 @@
-"use client"
+"use client";
 
-import React, { useState, ChangeEvent } from 'react'
-import http from '@/lib/axios'
-import { useRouter } from 'next/navigation'
+import React, { useState, ChangeEvent } from 'react';
+import http from '@/lib/axios';
+import { useRouter } from 'next/navigation';
 
 const RegisterForm = () => {
-  const [userId, setUserId] = useState('')
-  const [password, setPassword] = useState('')
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
   const [isAgreed, setIsAgreed] = useState(false);
-  const router = useRouter()
+  const [error, setError] = useState<string | null>(null);  // エラーメッセージ用のステートを追加
+  const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
       // CSRFトークンの取得
-      await http.get('/sanctum/csrf-cookie')
+      await http.get('/sanctum/csrf-cookie');
 
       // ユーザー登録リクエストの送信
-      await http.post('/api/register', {userId, password})
-      alert('User registered successfully')
-      router.push('/login')
+      await http.post('/api/register', { userId, password });
+      alert('User registered successfully');
+      router.push('/login');
     } catch (error) {
-      console.error('Register error:', error)
+      console.error('Register error:', error);
+      setError('Registration failed. Please try again.');  // エラーメッセージを設定
     }
-  }
+  };
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIsAgreed(event.target.checked);
   };
 
-
   return (
     <div className="">
       <div className="p-8 lg:w-1/2 mx-auto">
         <div className="bg-gray-100 rounded-b-lg py-12 px-4 lg:px-24">
-          <p className="text-center text-xl text-gray-500 font-light">
-            新規登録
-          </p>
+          <p className="text-center text-xl text-gray-500 font-light">新規登録</p>
           <form onSubmit={handleRegister} className="mt-6">
             <div className="relative">
               <input
-                className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600  transition  rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
+                className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
                 id="userId"
                 type="text"
                 value={userId}
@@ -64,7 +63,7 @@ const RegisterForm = () => {
             </div>
             <div className="relative mt-3">
               <input
-                className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600  transition  rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
+                className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
                 id="password"
                 type="password"
                 value={password}
@@ -85,16 +84,19 @@ const RegisterForm = () => {
                 </svg>
               </div>
             </div>
-
             <div className="mt-4 flex items-center text-gray-500">
-              <input type="checkbox" id="remember" name="remember" className="mr-2"
-                     onChange={handleCheckboxChange}
+              <input
+                type="checkbox"
+                id="remember"
+                name="remember"
+                className="mr-2"
+                onChange={handleCheckboxChange}
+                checked={isAgreed}
               />
               <label className="text-sm" htmlFor="remember">
                 <a className="text-indigo-400 hover:text-indigo-500">プライバシーポリシー</a>に同意する
               </label>
             </div>
-
             <div className="flex items-center justify-center mt-8">
               <button
                 className={`text-white py-2 px-4 uppercase rounded ${
@@ -106,12 +108,12 @@ const RegisterForm = () => {
                 新規登録
               </button>
             </div>
-
-      </form>
+          </form>
+          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+        </div>
+      </div>
     </div>
-</div>
-</div>
-)
-}
+  );
+};
 
-export default RegisterForm
+export default RegisterForm;

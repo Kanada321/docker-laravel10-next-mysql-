@@ -29,10 +29,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/profile', [UserController::class, 'updateProfile']);
 
     // ギルド関連
-    Route::prefix('guilds')->group(function () {
+    Route::prefix('guild')->group(function () {
         Route::post('/', [GuildController::class, 'create']);
         Route::get('/', [GuildController::class, 'index']);
         Route::get('/{id}', [GuildController::class, 'show']);
+        Route::get('/parameters/{guild}', [GuildController::class, 'getParameter']);
     });
 
     // イベント関連
