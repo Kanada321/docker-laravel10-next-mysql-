@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('guilds', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->boolean('use_pass')->default(false);
             $table->string('password')->nullable();
-            $table->string('token')->nullable();
+            $table->string('parameter')->unique();
             $table->timestamps();
             $table->softDeletes();
 

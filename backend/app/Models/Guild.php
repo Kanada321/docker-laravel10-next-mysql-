@@ -22,7 +22,7 @@ class Guild extends Model
             'user_id',
             'password',
             'use_pass',
-            'token',
+            'parameter',
             'event_time'
         ];
 

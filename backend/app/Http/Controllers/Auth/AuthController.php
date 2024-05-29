@@ -16,16 +16,32 @@ class AuthController extends Controller
     {
         $credentials = $request->only('userId', 'password');
         \Log::debug('ログイン試行:', $credentials);
-        if (Auth::attempt(['user_identification' => $credentials['userId'], 'password' => $credentials['password']])) {
-            \Log::debug('ログイン成功');
-            $user = Auth::user();
-            $user->tokens()->delete();
-            $token = $user->createToken("login:user{$user->id}")->plainTextToken;
 
-            return response()->json(['token' => $token], Response::HTTP_OK);
+        if (Auth::attempt(['user_identification' => $credentials['userId'], 'password' => $credentials['password']])) {
+            $user = Auth::user();
+            $user->tokens()->delete();  // 古いトークンを削除
+
+            try {
+                $guild = $user->guild;
+
+                if ($guild) {
+                    $guildId = $guild->id;
+                } else {
+                    return response()->json(['error' => 'Guild not found'], 404);
+                }
+
+                $token = $user->createToken("login:user{$user->id}")->plainTextToken;
+
+                return response()->json(['guildId' => $guildId], Response::HTTP_OK)
+                                 ->cookie('token', $token, 60, '/', null, true, true);  // HTTP Only Cookie
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Error fetching guild'], 500);
+            }
         }
+
         return response()->json('Can Not Login.', Response::HTTP_UNAUTHORIZED);
     }
+
 
     public function logout(Request $request)
     {

@@ -20,6 +20,7 @@ const useAuth = () => {
         setUser(null);
         if (typeof window !== 'undefined') {
           if ( pathname === '/secret' ) router.push('/login');
+          if ( pathname === '/guildSetting' ) router.push('/login');
         }
       } finally {
         setLoading(false);
@@ -27,7 +28,7 @@ const useAuth = () => {
     };
 
     fetchUser();
-  }, [router]);
+  }, [router, pathname]);
 
   return { user, loading };
 };

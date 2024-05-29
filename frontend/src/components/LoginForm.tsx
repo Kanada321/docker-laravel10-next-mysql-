@@ -21,7 +21,9 @@ const LoginForm = () => {
       const response = await http.post('/api/login', {userId, password})
 
       if (response.status === 200) {
-        router.push('/dashboard') // ログイン後のリダイレクト先
+        const { guildId } = response.data;
+
+        router.push(`/guildSetting?guildId=${guildId}`);
       }
     } catch (error) {
       console.error('Login error:', error)
