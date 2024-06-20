@@ -19,14 +19,14 @@ class GuildController extends Controller
     public function create(Request $request): JsonResponse
     {
         $request->validate([
-                               'name'        => 'required|string|unique:guilds,name|max:255',
-                               'description' => 'nullable|string',
-                           ]);
+            'name'        => 'required|string|unique:guilds,name|max:255',
+            'description' => 'nullable|string',
+        ]);
 
         $guild = Guild::create([
-                                   'name'        => $request->name,
-                                   'description' => $request->description,
-                               ]);
+            'name'        => $request->name,
+            'description' => $request->description,
+        ]);
 
         // ギルドマスターとして登録する
         $user = Auth::user();
@@ -42,6 +42,21 @@ class GuildController extends Controller
     {
         $guilds = Guild::with('users')->get();
         return response()->json($guilds);
+    }
+
+    public function update(Request $request, Guild $guild): JsonResponse
+    {
+        $request->validate([
+            'name'        => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $guild->update([
+            'name'        => $request->name,
+            'description' => $request->description,
+        ]);
+
+        return response()->json(['message' => 'Guild updated successfully'], 200);
     }
 
     /**
@@ -75,13 +90,21 @@ class GuildController extends Controller
      * @param Guild $guild
      * @return JsonResponse
      */
-    public function getParameter(Guild $guild): JsonResponse
+    public function fetchGuild(Guild $guild): JsonResponse
     {
-        if ($guild) {
-            return response()->json(['parameter' => $guild->parameter], 200);
-        } else {
+        $user        = Auth::user();
+        $userGuildId = $user->guild_id;
+        if ($guild->id !== $userGuildId) {
             return response()->json(['error' => 'Guild not found'], 404);
         }
+
+        return response()->json([
+            'parameter'   => $guild->parameter,  // ギルドのパラメータを返す
+            'name'        => $guild->name,            // ギルドの名前を返す
+            'description' => $guild->description,  // ギルドの説明を返す
+            'use_pass'    => $guild->use_pass,
+        ], 200);
+
     }
 
 }

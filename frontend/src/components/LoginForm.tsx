@@ -1,46 +1,52 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import http from '@/lib/axios'
-import { useRouter } from 'next/navigation'
-
+import React, { useState } from 'react';
+import http from '@/lib/axios';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 const LoginForm = () => {
-  const [userId, setUserId] = useState('')
-  const [password, setPassword] = useState('')
-  const router = useRouter()
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+  const { setUser } = useAuth();
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    try {
-      // CSRFトークンの取得
-      await http.get('/sanctum/csrf-cookie')
-
-      // ログインリクエストの送信
-      const response = await http.post('/api/login', {userId, password})
-
-      if (response.status === 200) {
-        const { guildId } = response.data;
-
-        router.push(`/guildSetting?guildId=${guildId}`);
-      }
-    } catch (error) {
-      console.error('Login error:', error)
-    }
-  }
+    http.get('/sanctum/csrf-cookie')
+      .then(() => {
+        return http.post('/api/login', { userId, password });
+      })
+      .then(response => {
+        if (response.status === 200) {
+          const { user, guildId } = response.data;
+          console.log('guildId');
+          console.log(guildId);
+          setUser(user); // ユーザー状態を更新
+          setTimeout(() => {
+            router.push(`/guildSetting?guildId=${guildId}`); // ギルドページに移動
+          }, 0);
+        } else {
+          throw new Error('Login failed');
+        }
+      })
+      .catch(error => {
+        console.error('Login error:', error);
+      });
+  };
 
   return (
     <div className="">
       <div className="p-8 lg:w-1/2 mx-auto">
         <div className="bg-gray-100 rounded-b-lg py-12 px-4 lg:px-24">
           <p className="text-center text-xl text-gray-500 font-light">
-           ログイン
+            ログイン
           </p>
           <form onSubmit={handleLogin} className="mt-6">
             <div className="relative">
               <input
-                className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600  transition  rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
+                className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
                 id="userId"
                 type="text"
                 value={userId}
@@ -63,7 +69,7 @@ const LoginForm = () => {
             </div>
             <div className="relative mt-3">
               <input
-                className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600  transition  rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
+                className="appearance-none border pl-12 border-gray-100 shadow-sm focus:shadow-md focus:placeholder-gray-600 transition rounded-md w-full py-3 text-gray-600 leading-tight focus:outline-none focus:ring-gray-600 focus:shadow-outline"
                 id="password"
                 type="password"
                 placeholder="Password"
@@ -100,8 +106,7 @@ const LoginForm = () => {
         </div>
       </div>
     </div>
-  )
+  );
+};
 
-}
-
-export default LoginForm
+export default LoginForm;

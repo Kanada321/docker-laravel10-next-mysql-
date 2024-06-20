@@ -10,6 +10,7 @@ const nextConfig = {
         reactRoot: true,
         serverComponents: true,
     },
+    reactStrictMode: false, // 一時的に無効化
 };
 
 export default nextConfig;

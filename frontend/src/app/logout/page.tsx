@@ -1,26 +1,31 @@
-"use client";
+"use client"
 
-import { useEffect } from 'react';
-import axios from '@/lib/axios';
-import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import http from '@/lib/axios'
+import { useAuth } from '@/context/AuthContext';
 
 const LogoutPage = () => {
-    const router = useRouter();
+  const router = useRouter()
+  const {user, loading, setUser} = useAuth()
 
-    useEffect(() => {
-        const logout = async () => {
-            try {
-                await axios.post('/logout');
-                router.push('/login');
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
-        };
+  useEffect(() => {
+    const logout = async () => {
 
-        logout();
-    }, [router]);
+      await http.post('/api/logout').then(() => {
+        console.log("logged out")
+        setUser(null) // ユーザー状態をリセット
+        router.push('/')
+      })
+        .catch(error => {
+          console.error('Logout error:', error)
+        })
+    }
 
-    return <div>Logging out...</div>;
-};
+    logout()
+  }, [router])
 
-export default LogoutPage;
+  return <div>Logging out...</div>
+}
+
+export default LogoutPage

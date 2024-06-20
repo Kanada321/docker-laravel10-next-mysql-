@@ -40,8 +40,6 @@ const HomePage = () => {
         </blockquote>
 
         <div className="relative mb-6 overflow-hidden rounded-lg bg-gray-100 shadow-lg md:mb-8">
-          <img src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&q=75&fit=crop&w=600&h=350"
-               loading="lazy" alt="Photo by Minh Pham" className="h-full w-full object-cover object-center"/>
         </div>
 
         <h2 className="mb-2 text-xl font-semibold text-gray-800 sm:text-2xl md:mb-4">Features</h2>
