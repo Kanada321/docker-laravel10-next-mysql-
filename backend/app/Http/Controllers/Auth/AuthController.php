@@ -8,6 +8,9 @@ use App\Http\Requests\AuthRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
+use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
@@ -15,7 +18,6 @@ class AuthController extends Controller
     public function login(AuthRequest $request)
     {
         $credentials = $request->only('userId', 'password');
-        \Log::debug('ログイン試行:', $credentials);
 
         if (Auth::attempt(['user_identification' => $credentials['userId'], 'password' => $credentials['password']])) {
             $user = Auth::user();
@@ -42,14 +44,23 @@ class AuthController extends Controller
         return response()->json('Can Not Login.', Response::HTTP_UNAUTHORIZED);
     }
 
-
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
+        $token = $request->user()->currentAccessToken();
+
+        if ($token instanceof PersonalAccessToken) {
+            $token->delete();
+        }
+
+        // セッションとクッキーをクリア
         Auth::guard('web')->logout();
+        Session::flush(); //  Redisセッションストレージをクリア
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->json(['message' => 'Logged out']);
+        // クッキーの削除
+        return response()->json(['message' => 'Successfully logged out'])
+                         ->withCookie(cookie()->forget('token'));
     }
 
     /**

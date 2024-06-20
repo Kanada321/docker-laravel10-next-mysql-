@@ -32,6 +32,11 @@ class RegisterController extends Controller
                 'parameter' => $parameter,
             ]);
 
+            //guild_idをusersテーブルにUpdate
+            $user->update([
+                'guild_id' => $guild->id,
+            ]);
+
             if ($guild) {
                 Log::info("Guild created: " . $guild->id);
             } else {

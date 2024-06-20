@@ -23,8 +23,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // 認証が必要なルート
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', [AuthController::class, 'getUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'getUser']);
     // ユーザープロファイル関連
     Route::put('/user/profile', [UserController::class, 'updateProfile']);
 
@@ -33,7 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [GuildController::class, 'create']);
         Route::get('/', [GuildController::class, 'index']);
         Route::get('/{id}', [GuildController::class, 'show']);
-        Route::get('/parameters/{guild}', [GuildController::class, 'getParameter']);
+        Route::get('/fetch-guild/{guild}', [GuildController::class, 'fetchGuild']);
+        Route::put('/update/{guild}', [GuildController::class, 'update']);
     });
 
     // イベント関連

@@ -131,7 +131,7 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
     volumes:
-      - ${WORK_DIR_FRONTEND}:/var/www/next:delegated
+      - ${WORK_DIR_FRONTEND}:/var/www/next:cached
     #    depends_on:
     #      - redis
     networks:

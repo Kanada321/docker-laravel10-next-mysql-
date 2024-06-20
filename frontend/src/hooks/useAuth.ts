@@ -1,15 +1,14 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from 'react';
-import { useRouter , usePathname } from 'next/navigation'; // App Router 用に変更
-import http from '@/lib/axios';
-import { User } from '@/types/User';
+import { useEffect, useState } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
+import http from '@/lib/axios'
+import { useAuth } from '@/context/AuthContext';
 
-const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+const useAuthHook = () => {
+  const { setUser } = useAuth();
   const router = useRouter();
-  const pathname = usePathname(); // 現在のパス名を取得
+  const pathname = usePathname();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -19,18 +18,17 @@ const useAuth = () => {
       } catch (error) {
         setUser(null);
         if (typeof window !== 'undefined') {
-          if ( pathname === '/secret' ) router.push('/login');
-          if ( pathname === '/guildSetting' ) router.push('/login');
+          if (pathname === '/secret' || pathname === '/guildSetting') {
+            router.push('/login');
+          }
         }
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchUser();
-  }, [router, pathname]);
+  }, [pathname, router, setUser]);
 
-  return { user, loading };
+  return null;
 };
 
-export default useAuth;
+export default useAuthHook;

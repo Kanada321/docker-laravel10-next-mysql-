@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import http from '@/lib/axios';
-import useAuth from '@/hooks/useAuth';
+import { useAuth } from '@/context/AuthContext';
 import { User } from '@/types/User';
 
 const ProfileForm = () => {
